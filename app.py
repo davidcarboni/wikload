@@ -1,4 +1,4 @@
-from flask import Flask, Markup, render_template, url_for, send_from_directory, send_file, abort
+from flask import Flask, Markup, redirect, render_template, url_for, send_from_directory, send_file, abort
 from flask_basicauth import BasicAuth
 import markdown2
 import os
@@ -20,9 +20,12 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD: {password != ''}")
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-#@basic_auth.required
+@app.route('/')
+def home():
+    """ Redirects to '/wiki' to match Github wiki URLs. """
+    return redirect("/wiki")
+
+@app.route('/wiki/<path:path>')
 def catch_all(path):
     """ Catch-all route 
 
