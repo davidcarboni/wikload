@@ -25,6 +25,7 @@ def home():
     """ Redirects to '/wiki' to match Github wiki URLs. """
     return redirect("/wiki")
 
+@app.route('/wiki', defaults={'path': ''})
 @app.route('/wiki/<path:path>')
 def catch_all(path):
     """ Catch-all route 
