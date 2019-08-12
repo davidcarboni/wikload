@@ -1,4 +1,5 @@
 from flask import Flask, Markup, redirect, render_template, url_for, send_from_directory, send_file, abort
+from werkzeug import secure_filename
 from flask_basicauth import BasicAuth
 import markdown2
 import os
@@ -33,39 +34,39 @@ def catch_all(path):
     Renders markdown for the requested path, 
     if a corresponding .md file can be found.
 
-    TODO: glaring use of user-supplied path here
+    TODO: potential misuse of user-supplied path here
     """
     print(f'Rendering path: {path}')
 
     # Locate markdown
-    markdown = path.strip('/') + '.md'
+    markdown = secure_filename(path).strip('/')
     if not path:
         # Github wiki home page
-        markdown = 'Home.md'
-    elif not os.path.isfile(f'./wiki/{markdown}'):
+        markdown = 'Home'
+    elif not os.path.isfile(f'./wiki/{markdown}.md'):
         # Consider implementing case-insensive match. Maybe.
-        print(f'{markdown} not found.')
+        print(f'{markdown}.md not found.')
         abort(404)
     
     # Render content
-    markdown = f'./wiki/{markdown}'
+    markdown = f'./wiki/{markdown}.md'
     html = markdown2.markdown_path(markdown)
     return render_template('page.html', content=Markup(html))
 
 @app.route('/stylesheets/<path:path>')
 @app.route('/javascript/<path:path>')
 def govuk_frontend_cssjs(path):
-    """ Static govuk-frontend content: css and js."""
+    """ css / js."""
     return send_from_directory('govuk-frontend/dist', path)
 
 @app.route('/assets/<path:path>')
 def govuk_frontend_assets(path):
-    """ Static govuk-frontend content: fonts and images."""
+    """ Fonts and images."""
     return send_from_directory('govuk-frontend/dist/assets', path)
 
 @app.route('/favicon.ico')
 def favicon():
-    """ Static govuk-frontend content: favicon.ico."""
+    """ favicon.ico."""
     return send_file('govuk-frontend/dist/assets/images/favicon.ico')
 
 # Run the app (if this file is called directly, not through 'flask run')
