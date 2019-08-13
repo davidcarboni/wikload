@@ -24,7 +24,7 @@ else:
 
 # Parse the sidebar navigation
 
-menu = {}
+menu = {'Home': 'Home'}
 sidebar_file = '_Sidebar.md'
 if not os.path.isfile(sidebar_file):
     sidebar_file = 'default-pages/_Sidebar.md'
