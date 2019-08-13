@@ -22,23 +22,24 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD: {password != ''}")
 
 
-# Parse the sidebar
+# Parse the sidebar navigation
 
 menu = {}
-sidebar_file = 'wiki/_Sidebar.md'
-if os.path.isfile(sidebar_file):
-    with open(sidebar_file) as sidebar:
-        markdown = sidebar.read()
-        # We're looking for: [link & text](relative/url)
-        # \[([a-zA-Z\s\&\,\-\:]+)]\(([a-zA-Z\&\,\-\_]+)\)
-        matches = re.findall('\\[([a-zA-Z\\s\\&\\,\\-\\:]+)]\\(([a-zA-Z\\&\\,\\-\\_]+)\\)', markdown)
-        for match in matches:
-            filename = match[1]
-            page_title = match[0]
-            menu[filename] = page_title
-print(menu)
+sidebar_file = '_Sidebar.md'
+if not os.path.isfile(sidebar_file):
+    sidebar_file = 'default-pages/_Sidebar.md'
+with open(sidebar_file) as sidebar:
+    markdown = sidebar.read()
+    # We're looking for: [link & text](relative/url)
+    # \[([a-zA-Z\s\&\,\-\:]+)]\(([a-zA-Z\&\,\-\_]+)\)
+    matches = re.findall('\\[([a-zA-Z\\s\\&\\,\\-\\:]+)]\\(([a-zA-Z\\&\\,\\-\\_]+)\\)', markdown)
+    for match in matches:
+        filename = match[1]
+        page_title = match[0]
+        menu[filename] = page_title
 
-# \[([a-zA-Z\s\&\,\-\:]+)]\(([a-zA-Z\&\,\-\_]+)\)
+
+# Flask routes
 
 @app.route('/')
 def home():
@@ -64,17 +65,14 @@ def catch_all(path):
     if not path:
         # Github wiki home page
         markdown = 'Home'
-    elif not os.path.isfile(f'./wiki/{markdown}.md'):
-        # Consider implementing case-insensive match. Maybe.
+    if not os.path.isfile(f'{markdown}.md'):
         print(f'{markdown}.md not found.')
         abort(404)
     
     # Render content
     title = menu.get(markdown)
-    html = markdown2.markdown_path(f'./wiki/{markdown}.md')
-    html = style(html)
-    nav = markdown2.markdown_path('./wiki/_Sidebar.md')
-    nav = style_nav(nav)
+    html = style(markdown2.markdown_path(f'{markdown}.md'))
+    nav = style_nav(markdown2.markdown_path('_Sidebar.md'))
     return render_template('page.html', 
         title=title, 
         path=markdown, 
@@ -87,12 +85,14 @@ def catch_all(path):
 @app.route('/wiki/javascript/<path:path>')
 def govuk_frontend_cssjs(path):
     """ css / js."""
+    print(path)
     return send_from_directory('govuk-frontend/dist', path)
 
 @app.route('/assets/<path:path>')
 @app.route('/wiki/assets/<path:path>')
 def govuk_frontend_assets(path):
     """ Fonts and images."""
+    print(path)
     return send_from_directory('govuk-frontend/dist/assets', path)
 
 @app.route('/favicon.ico')
@@ -101,9 +101,8 @@ def favicon():
     """ favicon.ico."""
     return send_file('govuk-frontend/dist/assets/images/favicon.ico')
 
-def paths(html):
-    paths = html
-    return paths
+
+# Helper functions
 
 def style(html):
     styled = html
@@ -125,8 +124,8 @@ def style(html):
 
     return styled
 
-def style_nav(nav):
-    styled = nav
+def style_nav(html):
+    styled = html
     # Menu-specific styles
     styled = styled.replace('<ul>', '<ul class="govuk-list govuk-!-font-size-16">')
     styled = styled.replace('<li>', '<li class="gem-c-related-navigation__link">')
