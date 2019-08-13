@@ -2,7 +2,7 @@
 <html lang="en" class="govuk-template ">
   <head>
     <meta charset="utf-8" />
-    <title>Incidents management - FSA</title>
+    <title>Incidents management - {{ title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c" /> 
     
@@ -75,13 +75,10 @@
   <div class="govuk-breadcrumbs">
   <ol class="govuk-breadcrumbs__list">
     <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="#/">Home</a>
+      <a class="govuk-breadcrumbs__link" href="/wiki">Home</a>
     </li>
     <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="#/browse/abroad">Passports, travel and living abroad</a>
-    </li>
-    <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="#/browse/abroad/passports">Passports</a>
+      <a class="govuk-breadcrumbs__link" href="/wiki/{{ markdown }}">{{ title }}</a>
     </li>
   </ol>
 </div>
