@@ -21,13 +21,16 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD: {password != ''}")
 
 
+# Parse the sidebar
+
+# \[([a-zA-Z\s\&\,\-]+)]\(([a-zA-Z\s\&\,\-]+)\)
+
 @app.route('/')
 def home():
-    """ Redirects to '/wiki' to match Github wiki URLs. """
+    """ Redirects to '/wiki' (to match Github wiki URLs). """
     return redirect("/wiki")
 
 @app.route('/wiki', defaults={'path': ''})
-@app.route('/wiki/', defaults={'path': ''})
 @app.route('/wiki/<path:path>')
 def catch_all(path):
     """ Catch-all route 
@@ -40,7 +43,9 @@ def catch_all(path):
     print(f'Rendering path: {path}')
 
     # Locate markdown
-    markdown = secure_filename(path).strip('/')
+    # Strip out any dodgy path values - only take a filename:
+    #markdown = secure_filename(path).strip('/')
+    markdown = os.path.basename(path).strip('/')
     if not path:
         # Github wiki home page
         markdown = 'Home'
@@ -54,21 +59,8 @@ def catch_all(path):
     html = markdown2.markdown_path(markdown)
     html = style(html)
     nav = markdown2.markdown_path('./wiki/_Sidebar.md')
-    print(nav)
-    nav = style(nav)
+    nav = style_nav(nav)
     return render_template('page.html', content=Markup(html), nav=Markup(nav))
-
-def style(html):
-    styled = html
-    styled = styled.replace('<h1>', '<h1 class="govuk-heading-l">')
-    styled = styled.replace('<h2>', '<h2 class="govuk-heading-m">')
-    styled = styled.replace('<h3>', '<h3 class="govuk-heading-s">')
-    styled = styled.replace('<h4>', '<h3 class="govuk-heading-xs">')
-    styled = styled.replace('<p>', '<p class="govuk-body">')
-    styled = styled.replace('<a ', '<a class="govuk-link" ')
-    styled = styled.replace('<ul>', '<ul class="govuk-list govuk-!-font-size-16">')
-    styled = styled.replace('<li>', '<li class="gem-c-related-navigation__link">')
-    return styled
 
 @app.route('/stylesheets/<path:path>')
 @app.route('/javascript/<path:path>')
@@ -89,6 +81,39 @@ def govuk_frontend_assets(path):
 def favicon():
     """ favicon.ico."""
     return send_file('govuk-frontend/dist/assets/images/favicon.ico')
+
+def paths(html):
+    paths = html
+    return paths
+
+def style(html):
+    styled = html
+    # Fix relative links
+    styled = styled.replace('<a href="', '<a href="/wiki/')
+    # Re-fix absolute links
+    styled = styled.replace('<a href="/wiki/https://', '<a href="https://')
+    styled = styled.replace('<a href="/wiki/http://', '<a href="http://')
+
+    # Add Govuk styles
+    styled = styled.replace('<h1>', '<h1 class="govuk-heading-l">')
+    styled = styled.replace('<h2>', '<h2 class="govuk-heading-m">')
+    styled = styled.replace('<h3>', '<h3 class="govuk-heading-s">')
+    styled = styled.replace('<h4>', '<h3 class="govuk-heading-xs">')
+    styled = styled.replace('<p>', '<p class="govuk-body">')
+    styled = styled.replace('<a ', '<a class="govuk-link" ')
+    styled = styled.replace('<ul>', '<ul class="govuk-list govuk-list--bullet">')
+    styled = styled.replace('<ol>', '<ol class="govuk-list govuk-list--number">')
+
+    return styled
+
+def style_nav(nav):
+    styled = nav
+    # Menu-specific styles
+    styled = styled.replace('<ul>', '<ul class="govuk-list govuk-!-font-size-16">')
+    styled = styled.replace('<li>', '<li class="gem-c-related-navigation__link">')
+    # The rest of the Govuk styles
+    return style(styled)
+
 
 # Run the app (if this file is called directly, not through 'flask run')
 # This is isn't recommended, but it's enough to run a low-traffic wiki
