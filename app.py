@@ -2,6 +2,7 @@ from flask import Flask, Markup, redirect, render_template, url_for, send_from_d
 from werkzeug import secure_filename
 from flask_basicauth import BasicAuth
 import markdown2
+import re
 import os
 
 app = Flask(__name__)
@@ -23,7 +24,21 @@ else:
 
 # Parse the sidebar
 
-# \[([a-zA-Z\s\&\,\-]+)]\(([a-zA-Z\s\&\,\-]+)\)
+menu = {}
+sidebar_file = 'wiki/_Sidebar.md'
+if os.path.isfile(sidebar_file):
+    with open(sidebar_file) as sidebar:
+        markdown = sidebar.read()
+        # We're looking for: [link & text](relative/url)
+        # \[([a-zA-Z\s\&\,\-\:]+)]\(([a-zA-Z\&\,\-\_]+)\)
+        matches = re.findall('\\[([a-zA-Z\\s\\&\\,\\-\\:]+)]\\(([a-zA-Z\\&\\,\\-\\_]+)\\)', markdown)
+        for match in matches:
+            filename = match[1]
+            page_title = match[0]
+            menu[filename] = page_title
+print(menu)
+
+# \[([a-zA-Z\s\&\,\-\:]+)]\(([a-zA-Z\&\,\-\_]+)\)
 
 @app.route('/')
 def home():
@@ -55,12 +70,16 @@ def catch_all(path):
         abort(404)
     
     # Render content
-    markdown = f'./wiki/{markdown}.md'
-    html = markdown2.markdown_path(markdown)
+    title = menu.get(markdown)
+    html = markdown2.markdown_path(f'./wiki/{markdown}.md')
     html = style(html)
     nav = markdown2.markdown_path('./wiki/_Sidebar.md')
     nav = style_nav(nav)
-    return render_template('page.html', content=Markup(html), nav=Markup(nav))
+    return render_template('page.html', 
+        title=title, 
+        path=markdown, 
+        content=Markup(html), 
+        nav=Markup(nav))
 
 @app.route('/stylesheets/<path:path>')
 @app.route('/javascript/<path:path>')
