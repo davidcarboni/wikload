@@ -6,9 +6,10 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY app.py .
-COPY wiki wiki
+COPY default-pages default-pages
 COPY templates templates
 COPY govuk-frontend govuk-frontend
+COPY *.md ./
 
 USER nobody
 
