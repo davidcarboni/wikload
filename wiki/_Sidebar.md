@@ -2,7 +2,7 @@
 
  - [Executive summary](Home)
  - [Methodology](Methodology)
- - [Timeline & ceremonies](Timeline-&-ceremonies)
+ - [Timeline & ceremonies](Timeline-&-Ceremonies)
  - [Problem statement, hypothesis & goals](Problem-statement,-hypothesis-&-goals)
  - [Team](Team)
  - [Principles](Principles)
