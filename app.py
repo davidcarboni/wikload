@@ -38,8 +38,8 @@ def parse_sidebar():
         current_app.config["nav"] = style_nav(markdown.markdown(md))
         # We're looking for: [link & text](relative/url)
         # So: [...non-]...](...non-)...) 
-        # \[[^\]]+\]\([^\)]+\)
-        matches = re.findall('\\[[^\\]]+\\]\\([^\\)]+\\)', md)
+        # \[([^\]]+)\]\(([^\)]+)\)
+        matches = re.findall('\\[([^\\]]+)\\]\\(([^\\)]+)\\)', md)
         for match in matches:
             filename = match[1]
             page_title = match[0]
@@ -75,8 +75,8 @@ def catch_all(path):
     # Render content
     title = current_app.config['menu'].get(md)
     with open(f'{md}.md') as f:
-        md = f.read()
-        html = style(markdown.markdown(md, extensions=['tables']))
+        content = f.read()
+        html = style(markdown.markdown(content, extensions=['tables']))
     return render_template('page.html', 
         title=title, 
         path=md, 
