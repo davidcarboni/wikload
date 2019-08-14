@@ -129,9 +129,18 @@ def style(html):
     styled = styled.replace('<h3>', '<h3 class="govuk-heading-s">')
     styled = styled.replace('<h4>', '<h3 class="govuk-heading-xs">')
     styled = styled.replace('<p>', '<p class="govuk-body">')
+    # Link
     styled = styled.replace('<a ', '<a class="govuk-link" ')
+    # List
     styled = styled.replace('<ul>', '<ul class="govuk-list govuk-list--bullet">')
     styled = styled.replace('<ol>', '<ol class="govuk-list govuk-list--number">')
+    # Table
+    styled = styled.replace('<table>', '<table class="govuk-table">')
+    styled = styled.replace('<thead>', '<thead class="govuk-table__head">')
+    styled = styled.replace('<tr>', '<tr class="govuk-table__row">')
+    styled = styled.replace('<th>', '<th scope="col" class="govuk-table__header">')
+    styled = styled.replace('<tbody>', '<tbody class="govuk-table__body">')
+    styled = styled.replace('<td>', '<td class="govuk-table__cell">')
 
     return styled
 
