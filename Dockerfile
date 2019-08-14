@@ -5,11 +5,7 @@ WORKDIR /wiki
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY app.py .
-COPY default-pages default-pages
-COPY templates templates
-COPY govuk-frontend govuk-frontend
-COPY *.md ./
+COPY . .
 
 USER nobody
 
