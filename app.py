@@ -1,7 +1,8 @@
-from flask import Flask, Markup, redirect, render_template, url_for, send_from_directory, send_file, abort
+from flask import Flask, current_app, Markup, redirect, render_template, url_for, send_from_directory, send_file, abort
 from werkzeug import secure_filename
 from flask_basicauth import BasicAuth
-import markdown2
+import markdown
+import markdown.extensions.tables
 import re
 import os
 
@@ -22,24 +23,27 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD: {password != ''}")
 
 
-# Parse the sidebar navigation
-
-menu = {'Home': 'Home'}
-sidebar_file = '_Sidebar.md'
-if not os.path.isfile(sidebar_file):
-    sidebar_file = 'default-pages/_Sidebar.md'
-with open(sidebar_file) as sidebar:
-    markdown = sidebar.read()
-    # We're looking for: [link & text](relative/url)
-    # \[([a-zA-Z\s\&\,\-\:]+)]\(([a-zA-Z\&\,\-\_]+)\)
-    matches = re.findall('\\[([a-zA-Z\\s\\&\\,\\-\\:]+)]\\(([a-zA-Z\\&\\,\\-\\_]+)\\)', markdown)
-    for match in matches:
-        filename = match[1]
-        page_title = match[0]
-        menu[filename] = page_title
-
-
 # Flask routes
+
+@app.before_first_request
+def parse_sidebar():
+    """ Parse sidebar navigation """
+
+    sidebar_file = '_Sidebar.md'
+    if not os.path.isfile(sidebar_file):
+        sidebar_file = 'default-pages/_Sidebar.md'
+    current_app.config['menu'] = {'Home': 'Home'}
+    with open(sidebar_file) as sidebar:
+        md = sidebar.read()
+        current_app.config["nav"] = style_nav(markdown.markdown(md))
+        # We're looking for: [link & text](relative/url)
+        # So: [...non-]...](...non-)...) 
+        # \[[^\]]+\]\([^\)]+\)
+        matches = re.findall('\\[[^\\]]+\\]\\([^\\)]+\\)', md)
+        for match in matches:
+            filename = match[1]
+            page_title = match[0]
+            current_app.config['menu'][filename] = page_title
 
 @app.route('/')
 def home():
@@ -60,24 +64,31 @@ def catch_all(path):
 
     # Locate markdown
     # Strip out any dodgy path values - only take a filename:
-    #markdown = secure_filename(path).strip('/')
-    markdown = os.path.basename(path).strip('/')
+    md = os.path.basename(path).strip('/')
     if not path:
         # Github wiki home page
-        markdown = 'Home'
-    if not os.path.isfile(f'{markdown}.md'):
-        print(f'{markdown}.md not found.')
+        md = 'Home'
+    if not os.path.isfile(f'{md}.md'):
+        print(f'{md}.md not found.')
         abort(404)
     
     # Render content
-    title = menu.get(markdown)
-    html = style(markdown2.markdown_path(f'{markdown}.md'))
-    nav = style_nav(markdown2.markdown_path('_Sidebar.md'))
+    title = current_app.config['menu'].get(md)
+    with open(f'{md}.md') as f:
+        md = f.read()
+        html = style(markdown.markdown(md, extensions=['tables']))
     return render_template('page.html', 
         title=title, 
-        path=markdown, 
+        path=md, 
         content=Markup(html), 
-        nav=Markup(nav))
+        nav=Markup(current_app.config['nav']))
+
+@app.route('/uploads/<path:path>')
+@app.route('/wiki/uploads/<path:path>')
+def uploads(path):
+    """ Images and other files added to the wiki.   """
+    print(path)
+    return send_from_directory('uploads', path)
 
 @app.route('/stylesheets/<path:path>')
 @app.route('/javascript/<path:path>')
