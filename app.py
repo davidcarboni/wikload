@@ -26,19 +26,24 @@ else:
 # Flask routes
 
 @app.before_first_request
-def parse_sidebar():
-    """ Parse sidebar navigation """
+def setup():
+    """ Parse title and sidebar navigation """
 
-    sidebar_file = '_Sidebar.md'
-    if not os.path.isfile(sidebar_file):
-        sidebar_file = 'default-pages/_Sidebar.md'
+    wiki_title_file = default_file('title.txt')
+    with open(wiki_title_file) as f:
+        wiki_title = f.read()
+        current_app.config['wiki_title'] = wiki_title
+        print(f'Using wiki title {wiki_title} from {wiki_title_file}')
+
+    sidebar_file = default_file('_Sidebar.md')
+        print(f'Using sidebar content from {sidebar_file}')
     current_app.config['menu'] = {'Home': 'Home'}
     with open(sidebar_file) as sidebar:
         md = sidebar.read()
         current_app.config["nav"] = style_nav(markdown.markdown(md))
         # We're looking for: [link & text](relative/url)
         # So: [...non-]...](...non-)...) 
-        # \[([^\]]+)\]\(([^\)]+)\)
+        # Regex: \[([^\]]+)\]\(([^\)]+)\)
         matches = re.findall('\\[([^\\]]+)\\]\\(([^\\)]+)\\)', md)
         for match in matches:
             filename = match[1]
@@ -78,6 +83,7 @@ def catch_all(path):
         content = f.read()
         html = style(markdown.markdown(content, extensions=['tables']))
     return render_template('page.html', 
+        wiki_title=current_app.config['wiki_title'],
         title=title, 
         path=md, 
         content=Markup(html), 
@@ -151,6 +157,9 @@ def style_nav(html):
     styled = styled.replace('<li>', '<li class="gem-c-related-navigation__link">')
     # The rest of the Govuk styles
     return style(styled)
+
+def default_file(filename):
+    return filename if os.path.isfile(filename) else os.path.join('default-pages', filename)
 
 
 # Run the app (if this file is called directly, not through 'flask run')
