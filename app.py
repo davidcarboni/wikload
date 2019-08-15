@@ -89,6 +89,15 @@ def catch_all(path):
         content=Markup(html), 
         nav=Markup(current_app.config['nav']))
 
+@app.route('/upload')
+def upload_form():
+    """ Form to upload images and other files to the wiki. """
+    return render_template('upload.html', 
+        wiki_title=current_app.config['wiki_title'],
+        title="Upload", 
+        path="Upload", 
+        nav=Markup(current_app.config['nav']))
+
 @app.route('/uploads/<path:path>')
 @app.route('/wiki/uploads/<path:path>')
 def uploads(path):
