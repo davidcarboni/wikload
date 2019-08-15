@@ -36,7 +36,7 @@ def setup():
         print(f'Using wiki title {wiki_title} from {wiki_title_file}')
 
     sidebar_file = default_file('_Sidebar.md')
-        print(f'Using sidebar content from {sidebar_file}')
+    print(f'Using sidebar content from {sidebar_file}')
     current_app.config['menu'] = {'Home': 'Home'}
     with open(sidebar_file) as sidebar:
         md = sidebar.read()
