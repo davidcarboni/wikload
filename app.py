@@ -1,12 +1,19 @@
-from flask import Flask, current_app, Markup, redirect, render_template, url_for, send_from_directory, send_file, abort
+from flask import Flask, current_app, Markup, request, redirect, render_template, url_for, send_from_directory, send_file, abort
 from werkzeug import secure_filename
 from flask_basicauth import BasicAuth
+from flask_sslify import SSLify
 import markdown
 import markdown.extensions.tables
 import re
 import os
 
 app = Flask(__name__)
+
+
+# Redirect to https, but allow this to be disabled in development
+
+if not os.getenv('NOSSL'):
+    sslify = SSLify(app)
 
 
 # Set up password protection
@@ -50,13 +57,8 @@ def setup():
             page_title = match[0]
             current_app.config['menu'][filename] = page_title
 
-@app.route('/')
-def home():
-    """ Redirects to '/wiki' (to match Github wiki URLs). """
-    return redirect("/wiki")
-
-@app.route('/wiki', defaults={'path': ''})
-@app.route('/wiki/<path:path>')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 def catch_all(path):
     """ Catch-all route 
 
@@ -89,7 +91,16 @@ def catch_all(path):
         content=Markup(html), 
         nav=Markup(current_app.config['nav']))
 
-@app.route('/upload')
+@app.route('/assets/<path:path>')
+def govuk_frontend_assets(path):
+    """ Fix for Govuk frontend requests. """
+    print(f"Fixed govuk path: /assets/{path}")
+    return send_from_directory('static/assets', path)
+
+
+# Wiki file uploads
+
+@app.route('/upload', methods=['GET'])
 def upload_form():
     """ Form to upload images and other files to the wiki. """
     return render_template('upload.html', 
@@ -98,34 +109,48 @@ def upload_form():
         path="Upload", 
         nav=Markup(current_app.config['nav']))
 
+@app.route('/upload', methods=['POST'])
+def upload_post():
+    """ Process an uploaded file, then render a page that contains just the markdown and displays the file. """
+
+    # Process the uploaded file
+    print(request.files)
+    if 'file' not in request.files:
+        print('No file found in request')
+        return redirect(request.url)
+    file = request.files['file']
+    if file.filename == '':
+        print('No filename found in request')
+        return redirect(request.url)
+    if file:
+        print('Processing upload')
+        filename = secure_filename(file.filename)
+        file.save(os.path.join('uploads', filename))
+
+    # Check the file in to Github
+    #...
+
+    # Render a page to show the upload
+    with open("default-pages/upload.md") as f:
+        content = f.read()
+    content = content.replace("{filename}", filename)
+    print(content)
+    md = markdown.markdown(content)
+    print(md)
+    html = style(md)
+    print(html)
+    return render_template('page.html', 
+        wiki_title=current_app.config['wiki_title'],
+        title="Upload", 
+        path="Upload", 
+        content=Markup(html), 
+        nav=Markup(current_app.config['nav']))
+
 @app.route('/uploads/<path:path>')
-@app.route('/wiki/uploads/<path:path>')
 def uploads(path):
     """ Images and other files added to the wiki.   """
     print(path)
     return send_from_directory('uploads', path)
-
-@app.route('/stylesheets/<path:path>')
-@app.route('/javascript/<path:path>')
-@app.route('/wiki/stylesheets/<path:path>')
-@app.route('/wiki/javascript/<path:path>')
-def govuk_frontend_cssjs(path):
-    """ css / js."""
-    print(path)
-    return send_from_directory('govuk-frontend/dist', path)
-
-@app.route('/assets/<path:path>')
-@app.route('/wiki/assets/<path:path>')
-def govuk_frontend_assets(path):
-    """ Fonts and images."""
-    print(path)
-    return send_from_directory('govuk-frontend/dist/assets', path)
-
-@app.route('/favicon.ico')
-@app.route('/wiki/favicon.ico')
-def favicon():
-    """ favicon.ico."""
-    return send_file('govuk-frontend/dist/assets/images/favicon.ico')
 
 
 # Helper functions
