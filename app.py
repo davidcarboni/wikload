@@ -12,7 +12,10 @@ app = Flask(__name__)
 
 # Redirect to https, but allow this to be disabled in development
 
-if not os.getenv('NOSSL'):
+if os.getenv('NOSSL'):
+    print("Configured to not require SSL.")
+else:
+    print("Setting up redirect to SSL.")
     sslify = SSLify(app)
 
 
