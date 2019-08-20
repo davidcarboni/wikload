@@ -99,7 +99,7 @@
           The file will be uploaded to Github so you’ll need credentials with access to the wiki repository.
       </p>
 
-      <form method="post" novalidate="">
+      <form method="post" action="/upload" enctype="multipart/form-data">
 
         <div class="govuk-form-group">
           <label class="govuk-label govuk-label--m" for="email">
@@ -122,13 +122,13 @@
         </div>
     
         <div class="govuk-form-group">
-          <label class="govuk-label govuk-label--m" for="upload">
+          <label class="govuk-label govuk-label--m" for="file">
               Upload your file
           </label>
-          <span id="upload-hint" class="govuk-hint">
+          <span id="file-hint" class="govuk-hint">
               This can be an image or a download, such as PDF or Powerpoint.
           </span>
-          <input class="govuk-file-upload" id="upload" name="upload" type="file" aria-describedby="upload-hint">
+          <input class="govuk-file-upload" id="file" name="file" type="file" aria-describedby="upload-hint">
         </div>
     
     
