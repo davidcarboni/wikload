@@ -21,16 +21,16 @@ else:
 
 # Set up password protection
 
-username = os.getenv('USERNAME')
-password = os.getenv('PASSWORD')
+username = os.getenv('USERNAME', '')
+password = os.getenv('PASSWORD', '')
 if username and password:
     print(f"Setting up authentication for user {username}")
-    basic_auth = BasicAuth(app) 
     app.config['BASIC_AUTH_USERNAME'] = username
     app.config['BASIC_AUTH_PASSWORD'] = password
     app.config['BASIC_AUTH_FORCE'] = True
+    basic_auth = BasicAuth(app) 
 else:
-    print(f"Not setting up authentication. USERNAME: {username}, PASSWORD: {password != ''}")
+    print(f"Not setting up authentication. USERNAME: {username}, PASSWORD set: {password != ''}")
 
 
 # Flask routes
@@ -77,6 +77,7 @@ def catch_all(path):
         print('Servirng static file: {path}')
         return send_from_directory('uploads', path)
 
+    # Otherwise, try to render a page
     print(f'Rendering path: {path}')
 
     # Locate markdown
