@@ -70,6 +70,13 @@ def catch_all(path):
 
     TODO: potential misuse of user-supplied path here
     """
+
+    # If there's a file extension, serve this as a static request
+    _, extension = os.path.splitext(path)
+    if extension:
+        print('Servirng static file: {path}')
+        return send_from_directory('uploads', path)
+
     print(f'Rendering path: {path}')
 
     # Locate markdown
@@ -78,6 +85,12 @@ def catch_all(path):
     if not path:
         # Github wiki home page
         md = 'Home'
+
+    # Be a bit lenient with capitalisation
+    if not os.path.isfile(f'{md}.md'):
+        md = md.lower()
+    if not os.path.isfile(f'{md}.md'):
+        md = md.capitalize()
     if not os.path.isfile(f'{md}.md'):
         print(f'{md}.md not found.')
         abort(404)
@@ -160,11 +173,9 @@ def uploads(path):
 
 def style(html):
     styled = html
-    # Fix relative links
-    styled = styled.replace('<a href="', '<a href="/wiki/')
-    # Re-fix absolute links
-    styled = styled.replace('<a href="/wiki/https://', '<a href="https://')
-    styled = styled.replace('<a href="/wiki/http://', '<a href="http://')
+
+    # Avoid image overflow
+    styled = styled.replace('<img', '<img style="max-width:100%"')
 
     # Add Govuk styles
     styled = styled.replace('<h1>', '<h1 class="govuk-heading-l">')
