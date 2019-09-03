@@ -1,13 +1,12 @@
-Here's the code you need to display this image:
+## Including your file
 
- * `<img src="uploads/{filename}" width="100%"/>`
+Here's the code you need to add this file to a page:
 
-or
+    ![Uploaded file](/uploads/{filename})
 
- * `![Uploaded file]({filename})`
+## Preview
 
-
-<img src="/uploads/{filename}" width="100%"/>
+Here's how the file will look using the above code:
 
 ![Uploaded file](/uploads/{filename})
 
