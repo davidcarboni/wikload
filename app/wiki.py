@@ -39,17 +39,17 @@ def catch_all(path):
         md = 'Home'
 
     # Be a bit lenient with capitalisation
-    if not os.path.isfile(f'{md}.md'):
+    if not os.path.isfile(default_file(f'{md}.md')):
         md = md.lower()
-    if not os.path.isfile(f'{md}.md'):
+    if not os.path.isfile(default_file(f'{md}.md')):
         md = md.capitalize()
-    if not os.path.isfile(f'{md}.md'):
+    if not os.path.isfile(default_file(f'{md}.md')):
         print(f'{md}.md not found.')
         abort(404)
     
     # Render content
     title = menu().get(md)
-    with open(f'{md}.md') as f:
+    with open(os.path.join('wiki', f'{md}.md')) as f:
         content = f.read()
         html = style(markdown.markdown(content, extensions=['tables']))
     return render_template('page.html', 
@@ -112,7 +112,7 @@ def nav():
         return style_nav(markdown.markdown(md))
 
 def default_file(filename):
-    return filename if os.path.isfile(filename) else os.path.join('default-pages', filename)
+    return filename if os.path.join('wiki', filename) else os.path.join('default-pages', filename)
 
 
 # Styling functions
@@ -151,6 +151,3 @@ def style_nav(html):
     styled = styled.replace('<li>', '<li class="gem-c-related-navigation__link">')
     # The rest of the Govuk styles
     return style(styled)
-
-print(default_file('test'))
-print(os.path.isfile(default_file('test')))
