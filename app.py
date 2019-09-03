@@ -74,7 +74,7 @@ def catch_all(path):
     # If there's a file extension, serve this as a static request
     _, extension = os.path.splitext(path)
     if extension:
-        print('Servirng static file: {path}')
+        print(f'Servirng static file: {path}')
         return send_from_directory('uploads', path)
 
     # Otherwise, try to render a page
