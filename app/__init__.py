@@ -56,7 +56,7 @@ def export(host, database, user, password):
                     cursor.execute(sql)
                     setting = cursor.fetchone()
                     title = setting[0]
-                    with open('title.txt', 'w+') as f:
+                    with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
                         f.write(title["v"])
 
             # Pages
@@ -71,7 +71,7 @@ def export(host, database, user, password):
                 count=0
                 for row in result:
                     page = {'path': row[path], 'title': row[title]}
-                    with open(f'{page["path"]}.md', 'w+') as f:
+                    with open(os.path.join('wiki', f'{page["path"]}.md'), 'w+') as f:
                         f.write(row[content])
                     pages.append(page)
                     count = count + 1
@@ -83,7 +83,7 @@ def export(host, database, user, password):
                 cursor.execute(sql)
                 row = cursor.fetchone()
                 navigation = row[1]
-                with open('_Sidebar.md', 'w+') as f:
+                with open(os.path.join('wiki', '_Sidebar.md'), 'w+') as f:
                     for item in navigation:
                         if item.get('target'):
                             item["target"] = item["target"].strip('/')
