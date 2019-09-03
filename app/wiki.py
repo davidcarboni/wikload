@@ -39,17 +39,19 @@ def catch_all(path):
         md = 'Home'
 
     # Be a bit lenient with capitalisation
-    if not os.path.isfile(default_file(f'{md}.md')):
+    if not os.path.isfile(os.path.join('wiki', f'{md}.md')):
         md = md.lower()
-    if not os.path.isfile(default_file(f'{md}.md')):
+    if not os.path.isfile(os.path.join('wiki', f'{md}.md')):
         md = md.capitalize()
     if not os.path.isfile(default_file(f'{md}.md')):
+        # NB for 'home', the capilatilzed name should match the default Home.md
         print(f'{md}.md not found.')
         abort(404)
     
     # Render content
-    title = menu().get(md)
-    with open(os.path.join('wiki', f'{md}.md')) as f:
+    title = menu().get(md.lower())
+    print(f'Title for {md.lower()} is {title}')
+    with open(default_file(f'{md}.md')) as f:
         content = f.read()
         html = style(markdown.markdown(content, extensions=['tables']))
     return render_template('page.html', 
@@ -69,8 +71,10 @@ def govuk_frontend_assets(path):
 @wiki.route('/uploads/<path:path>')
 def uploads(path):
     """ Serve images and other files added to the wiki.   """
-    print(f'Serving uploaded file: {path}')
-    return send_from_directory('uploads', path)
+    filename = secure_filename(os.path.basename(path))
+    directory = os.path.join(os.getcwd(), 'uploads')
+    print(f'Serving uploaded file: {filename}')
+    return send_from_directory(directory, filename)
 
 
 # Supporting wiki content
@@ -88,8 +92,7 @@ def menu():
     """ Parse sidebar navigation menu links """
 
     sidebar_file = default_file('_Sidebar.md')
-    print(f'Parsing sidebar content from {sidebar_file}')
-    menu = {'Home': 'Home'}
+    menu = {'home': 'Home'}
     with open(sidebar_file) as sidebar:
         md = sidebar.read()
         # We're looking for: [link & text](relative/url)
@@ -99,20 +102,22 @@ def menu():
         for match in matches:
             filename = match[1]
             page_title = match[0]
-            menu[filename] = page_title
+            menu[filename.lower()] = page_title
     return menu
 
 def nav():
     """ Render navigation markup """
 
     sidebar_file = default_file('_Sidebar.md')
-    print(f'Rendering sidebar content from {sidebar_file}')
     with open(sidebar_file) as sidebar:
         md = sidebar.read()
         return style_nav(markdown.markdown(md))
 
 def default_file(filename):
-    return filename if os.path.join('wiki', filename) else os.path.join('default-pages', filename)
+
+    path = os.path.join('wiki', filename)
+    default = os.path.join('default-pages', filename)
+    return path if os.path.isfile(path) else default
 
 
 # Styling functions
