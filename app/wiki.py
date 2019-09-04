@@ -92,7 +92,7 @@ def menu():
     """ Parse sidebar navigation menu links """
 
     sidebar_file = default_file('_Sidebar.md')
-    menu = {'home': wiki_title()}
+    menu = {'home': "Home"}
     with open(sidebar_file) as sidebar:
         md = sidebar.read()
         # We're looking for: [link & text](relative/url)
