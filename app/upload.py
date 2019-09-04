@@ -38,8 +38,11 @@ def upload_post():
         return redirect(request.url)
     if file:
         print('Processing upload')
+        folder = os.path.join('wiki', 'uploads')
+        if not os.path.isdir(folder):
+            os.mkdir(folder)
         filename = secure_filename(file.filename)
-        file.save(os.path.join('uploads', filename))
+        file.save(os.path.join('wiki', 'uploads', filename))
 
     # Check the file in to Github
     #...
