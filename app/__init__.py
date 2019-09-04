@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.register_blueprint(wiki)
 app.register_blueprint(upload)
 
+
 # Redirect to https, but allow this to be disabled in development
 
 if os.getenv('NOSSL'):
@@ -37,8 +38,6 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD set: {password != ''}")
 
 
-
-
 # Wiki.js database settings
 
 host = os.getenv("WIKIJS_HOST")
@@ -47,6 +46,9 @@ user = os.getenv("WIKIJS_USER")
 password = os.getenv("WIKIJS_PASSWORD")
 repo = os.getenv("GITHUB_WIKI_REPO")
 
+if not os.path.isdir('wiki'):
+    os.mkdir('wiki')
+    
 if host and database and user and password:
     print("Initiating update...")
     # export(host, database, user, password)
