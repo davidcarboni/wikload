@@ -14,3 +14,13 @@ def pull(url):
     else:
         # clone
         exec(["git", "clone", url, 'wiki'])
+
+def clone(url):
+    # Wiki title
+    # NB we may have set a custom one, so don't overwrite
+    if not os.path.isfile(os.path.join('wiki', 'title.txt')):
+        title = os.getenv('WIKI_TITLE')
+        if title:
+            with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
+                f.write(title["v"])
+    pull(url)

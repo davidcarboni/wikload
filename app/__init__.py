@@ -8,7 +8,7 @@ import threading
 from .wiki import wiki
 from .upload import upload
 from .wikijs import export
-from .github import pull
+from .github import clone
 
 app = Flask(__name__)
 app.register_blueprint(wiki)
@@ -48,7 +48,7 @@ repo = os.getenv("GITHUB_WIKI_REPO")
 
 if not os.path.isdir('wiki'):
     os.mkdir('wiki')
-    
+
 if host and database and user and password:
     print("Initiating update...")
     # export(host, database, user, password)
@@ -57,7 +57,7 @@ if host and database and user and password:
 elif repo:
     print("Cloning git repo...")
     #pull(repo)
-    t = threading.Thread(target=pull, args=(repo,))
+    t = threading.Thread(target=clone, args=(repo,))
     t.start()
 else:
     print("Not updating wiki content. (WIKIJS_HOST, WIKIJS_DATABASE, WIKIJS_USER, WIKIJS_PASSWORD - or GITHUB_WIKI_REPO)")

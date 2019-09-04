@@ -10,15 +10,17 @@ def export(host, database, user, password):
 
             # Wiki title
             # NB we may have set a custom one, so don't overwrite
-            if not os.path.isfile('title.txt'):
+            if not os.path.isfile(os.path.join('wiki', 'title.txt')):
                 print("title...")
-                with connection.cursor() as cursor:
-                    sql = "select value from settings where key='title'"
-                    cursor.execute(sql)
-                    setting = cursor.fetchone()
-                    title = setting[0]
-                    with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
-                        f.write(title["v"])
+                title = os.getenv('WIKI_TITLE')
+                if not title:
+                    with connection.cursor() as cursor:
+                        sql = "select value from settings where key='title'"
+                        cursor.execute(sql)
+                        setting = cursor.fetchone()
+                        title = setting[0]
+                with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
+                    f.write(title["v"])
 
             # Pages
             print("pages...")
