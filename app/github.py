@@ -22,5 +22,5 @@ def clone(url):
         title = os.getenv('WIKI_TITLE')
         if title:
             with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
-                f.write(title["v"])
+                f.write(title)
     pull(url)

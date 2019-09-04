@@ -18,9 +18,9 @@ def export(host, database, user, password):
                         sql = "select value from settings where key='title'"
                         cursor.execute(sql)
                         setting = cursor.fetchone()
-                        title = setting[0]
+                        title = setting[0]["v"]
                 with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
-                    f.write(title["v"])
+                    f.write(title)
 
             # Pages
             print("pages...")
