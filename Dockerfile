@@ -1,7 +1,7 @@
 FROM python:alpine
 
-# Dependencies for psycopg2
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
+# Git and dependencies for psycopg2
+RUN apk update && apk add git postgresql-dev gcc python3-dev musl-dev
 
 WORKDIR /wiki
 
@@ -10,6 +10,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN mkdir wiki
 RUN chown -R 1000 wiki
 USER 1000
 
