@@ -43,10 +43,6 @@ def export(host, database, user, password):
         print('Updating from Wiki.js database...')
         with psycopg2.connect(host=host, database=database, user=user, password=password) as connection:
 
-            pages = []
-            if not os.path.isdir('uploads'):
-                os.mkdir('uploads')
-
             # Wiki title
             # NB we may have set a custom one, so don't overwrite
             if not os.path.isfile('title.txt'):
@@ -73,7 +69,6 @@ def export(host, database, user, password):
                     page = {'path': row[path], 'title': row[title]}
                     with open(os.path.join('wiki', f'{page["path"]}.md'), 'w+') as f:
                         f.write(row[content])
-                    pages.append(page)
                     count = count + 1
 
             # Navigation
@@ -95,6 +90,7 @@ def export(host, database, user, password):
             # Uploaded files
             print("Assets...")
             assets = []
+            os.mkdir(os.path.join('wiki', 'uploads'))
             with connection.cursor() as cursor:
                 sql = 'select id, filename from assets'
                 cursor.execute(sql)
@@ -109,15 +105,15 @@ def export(host, database, user, password):
                     sql = f'select data from "assetData" where id={asset["id"]}'
                     cursor.execute(sql)
                     asset_data = cursor.fetchone()
-                    with open(os.path.join('uploads', asset['filename']), 'wb+') as f:
+                    with open(os.path.join('wiki', 'uploads', asset['filename']), 'wb+') as f:
                         f.write(asset_data[0])
 
 
         print(f"Exported {count} pages.")
 
     except Exception as e:
-        print("Error updating from wiki.js database:")
-        print(e)
+        print("Error updating from wiki.js database")
+        raise(e)
 
 
 # Wiki.js database settings
@@ -126,11 +122,15 @@ host = os.getenv("WIKIJS_HOST")
 database = os.getenv("WIKIJS_DATABASE")
 user = os.getenv("WIKIJS_USER")
 password = os.getenv("WIKIJS_PASSWORD")
+repo = os.getenv("GIT_WIKI_REPO")
 
 if host and database and user and password:
     print("Initiating update...")
     t = threading.Thread(target=export, args=(host, database, user, password))
     t.start()
+elif repo:
+    print("Cloning git repo...")
+    
 else:
     print("Not updating from wiki.js database. (WIKIJS_HOST, WIKIJS_DATABASE, WIKIJS_USER, WIKIJS_PASSWORD)")
 
