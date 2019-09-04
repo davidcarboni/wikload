@@ -22,20 +22,20 @@ def catch_all(path):
     TODO: potential misuse of user-supplied path here
     """
 
-    # If there's a file extension, serve this as a static request
-    _, extension = os.path.splitext(path)
-    if extension:
-        print(f'Servirng static file: {path}')
-        return send_from_directory('uploads', path)
+    # # If there's a file extension, serve this as a static request
+    # # This covers any cases where an uploaded file is linked with only a leading slash instead of /uploads/...
+    # _, extension = os.path.splitext(path)
+    # if extension:
+    #     return uploads(path)
 
     # Otherwise, try to render a page
     print(f'Rendering path: {path}')
 
     # Locate markdown
     # Strip out any dodgy path values - only take a filename:
-    md = os.path.basename(path).strip('/')
+    md = secure_filename(os.path.basename(path).strip('/'))
     if not path:
-        # Github wiki home page
+        # Wiki home page
         md = 'Home'
 
     # Be a bit lenient with capitalisation
@@ -44,7 +44,7 @@ def catch_all(path):
     if not os.path.isfile(os.path.join('wiki', f'{md}.md')):
         md = md.capitalize()
     if not os.path.isfile(default_file(f'{md}.md')):
-        # NB for 'home', the capilatilzed name should match the default Home.md
+        # NB for 'home', the capilatilzed name would match the default Home.md
         print(f'{md}.md not found.')
         abort(404)
     
@@ -72,7 +72,7 @@ def govuk_frontend_assets(path):
 def uploads(path):
     """ Serve images and other files added to the wiki.   """
     filename = secure_filename(os.path.basename(path))
-    directory = os.path.join(os.getcwd(), 'uploads')
+    directory = os.path.join(os.getcwd(), 'wiki', 'uploads')
     print(f'Serving uploaded file: {filename}')
     return send_from_directory(directory, filename)
 
@@ -92,7 +92,7 @@ def menu():
     """ Parse sidebar navigation menu links """
 
     sidebar_file = default_file('_Sidebar.md')
-    menu = {'home': 'Home'}
+    menu = {'home': wiki_title()}
     with open(sidebar_file) as sidebar:
         md = sidebar.read()
         # We're looking for: [link & text](relative/url)
