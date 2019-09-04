@@ -10,7 +10,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN chown -R 1000 .
+RUN chown -R 1000 wiki
 USER 1000
 
 # This is isn't recommended, but it's enough to run a low-traffic wiki
