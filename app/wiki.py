@@ -22,45 +22,28 @@ def catch_all(path):
     TODO: potential misuse of user-supplied path here
     """
 
-    # # If there's a file extension, serve this as a static request
-    # # This covers any cases where an uploaded file is linked with only a leading slash instead of /uploads/...
-    # _, extension = os.path.splitext(path)
-    # if extension:
-    #     return uploads(path)
-
     # Otherwise, try to render a page
-    print(f'Rendering path: {path}')
+    print(f'Requested path: {path}')
 
     # Locate markdown
-    # Strip out any dodgy path values - only take a filename:
-    md = secure_filename(os.path.basename(path).strip('/'))
+    # Avoid a dodgy path by only taking the filename:
+    page_name = secure_filename(os.path.basename(path).strip('/'))
     if not path:
         # Wiki home page
-        md = 'Home'
+        page_name = 'Home'
+    print(f'Page name: {page_name}')
 
     # Be a bit lenient with capitalisation
-    if not os.path.isfile(os.path.join('wiki', f'{md}.md')):
-        md = md.lower()
-    if not os.path.isfile(os.path.join('wiki', f'{md}.md')):
-        md = md.capitalize()
-    if not os.path.isfile(default_file(f'{md}.md')):
-        # NB for 'home', the capilatilzed name would match the default Home.md
-        print(f'{md}.md not found.')
+    page_path = case_lenient_markdown(page_name)
+    if not page_path:
+        print(f'Page {page_name} not found.')
         abort(404)
+    print(f'Markdow file: {page_path}')
     
     # Render content
-    title = menu().get(md.lower())
-    print(f'Title for {md.lower()} is {title}')
-    with open(default_file(f'{md}.md')) as f:
-        content = f.read()
-        html = style(markdown.markdown(content, extensions=['tables']))
-    return render_template('page.html', 
-        wiki_title=wiki_title(),
-        title=title, 
-        path=md, 
-        content=Markup(html), 
-        nav=Markup(nav())
-        )
+    page_title = menu().get(page_name.lower())
+    print(f'Title for {page_name} is {page_title}')
+    return render(page_name, page_title, page_path)
 
 @wiki.route('/assets/<path:path>')
 def govuk_frontend_assets(path):
@@ -75,6 +58,20 @@ def uploads(path):
     directory = os.path.join(os.getcwd(), 'wiki', 'uploads')
     print(f'Serving uploaded file: {filename}')
     return send_from_directory(directory, filename)
+
+@wiki.errorhandler(404)
+def page_not_found(e):
+    page_name = '404'
+    page_path = default_file(f'{page_name}.md')
+    print(f'404 markdown: {page_path}')
+    return render(page_name, "Page not found", page_path, 400)
+
+@wiki.errorhandler(500)
+def internal_server_error(e):
+    page_name = '500'
+    page_path = default_file(f'{page_name}.md')
+    print(f'500 markdown: {page_path}')
+    return render(page_name, "Server error", page_path, 500)
 
 
 # Supporting wiki content
@@ -113,11 +110,64 @@ def nav():
         md = sidebar.read()
         return style_nav(markdown.markdown(md))
 
-def default_file(filename):
 
-    path = os.path.join('wiki', filename)
-    default = os.path.join('default-pages', filename)
-    return path if os.path.isfile(path) else default
+# Helper functions
+
+def case_lenient_markdown(page_name):
+    """ Returns a path and filename, being lenient with case 
+        and falling back to a default if available. 
+    """
+
+    # Find a file in the wiki folder
+
+    original = os.path.join('wiki', f'{page_name}.md')
+    if os.path.isfile(original):
+        return original
+    
+    lowercase = os.path.join('wiki', f'{page_name.lower()}.md')
+    if os.path.isfile(lowercase):
+        return lowercase
+
+    capitalised = os.path.join('wiki', f'{page_name.lower().capitalize()}.md')
+    if os.path.isfile(capitalised):
+        return capitalised
+    
+    # Fall back to a default file - we know these names are capitalised
+
+    default = os.path.join('default-pages', page_name.lower().capitalize())
+    if os.path.isfile(default):
+        return default
+    
+    return None
+
+def default_file(filename):
+    """ Returns a path and filename, falling back to a default if available. 
+    """
+
+    wiki_file = os.path.join('wiki', filename)
+    if os.path.isfile(wiki_file):
+        return wiki_file
+    
+    default_file = os.path.join('default-pages', filename)
+    if os.path.isfile(default_file):
+        return default_file
+    
+    return None
+
+def render(page_name, page_title, page_path, response_code=200):
+    
+    # Render content
+    print(f'Rendering {page_path}')
+    with open(page_path) as f:
+        content = f.read()
+        html = style(markdown.markdown(content, extensions=['tables']))
+    return render_template('page.html', 
+        wiki_title=wiki_title(),
+        title=page_title, 
+        path=page_name, 
+        content=Markup(html), 
+        nav=Markup(nav())
+        ), response_code
 
 
 # Styling functions
