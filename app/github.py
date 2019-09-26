@@ -1,5 +1,6 @@
 import subprocess
 import os
+import urllib.parse
 
 def exec(command):
     result = subprocess.run(command, capture_output=True)
@@ -14,6 +15,16 @@ def pull(url):
     else:
         # clone
         exec(["git", "clone", url, 'wiki'])
+
+def push(url, username, password):
+    exec(["git", "remote", "rm", "origin"])
+    try:
+        credentials = urllib.parse.quote(username) + ":" + urllib.parse.quote(password)
+        exec(["git", "remote", "add", "origin", url.replace("https://", f'https://{credentials}@')])
+        exec(["git", "push", "origin", "master"])
+    finally:
+        exec(["git", "remote", "rm", "origin"])
+        exec(["git", "remote", "add", "origin", url])
 
 def clone(url):
     # Wiki title
