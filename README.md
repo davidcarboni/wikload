@@ -1,3 +1,13 @@
+## Assumptions
+
+ * You're comfortable editing (or learning to work with) Markdown
+ * You're able to create your website content as a Gihub wiki
+ * You have a Github user
+ * You optionally have a Github organisation
+ * You have a repository for your user or organisation, which can be <user|organisation.github.io> if you're creating a user/organisation site (See https://help.github.com/en/articles/about-github-pages#types-of-github-pages-sites for details)
+ * Your repository is public (specifically, it can be accessed by someone not logged in to Github, and cloned using an https url)
+ * You're able to generate a user token for your Github account with ? privileges (or create an account with access to just this repo)
+
 ## Govwiki
 
 Render a Github wiki using Govuk frontend.
