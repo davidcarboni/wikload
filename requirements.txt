@@ -3,3 +3,4 @@ Flask-SSLify
 Flask-BasicAuth
 markdown
 psycopg2-binary
+PyGithub
