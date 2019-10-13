@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, Markup, request, redirect, render_template, url_for, send_from_directory, send_file, abort
+from flask import Blueprint, current_app, Markup, request, redirect, render_template, send_from_directory, abort
 from werkzeug import secure_filename
 from flask_basicauth import BasicAuth
 from flask_sslify import SSLify
