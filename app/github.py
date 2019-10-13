@@ -18,7 +18,7 @@ print(f"Github repo: {repo}, wiki url: {wiki_url}.")
 print(f"Github access token set: {'yes' if access_token else 'no'}")
 
 
-def clone_wiki():
+def pull():
 
     if os.path.isdir(os.path.join('wiki', '.git')):
         # pull

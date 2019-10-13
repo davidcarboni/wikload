@@ -4,7 +4,7 @@ import markdown
 import os
 import tempfile
 from .wiki import wiki_title, nav, style
-from .github import commit
+from .github import commit, pull
 
 upload = Blueprint('upload', __name__)
 
@@ -37,8 +37,10 @@ def upload_post():
         # Commit to Github and, if successful, save locally:
         print(f'attempting to commit {path} to Github')
         if commit(path, temp):
+            print(f'Commit successful, attempting to pull changes')
+            pull()
             print(f'Commit successful, attempting to save locally')
-            save(path, temp)
+            #save(path, temp)
 
             # Render a page to show the upload
             with open("default-pages/upload.md") as f:

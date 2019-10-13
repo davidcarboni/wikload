@@ -6,7 +6,7 @@ import os
 import threading
 from .wiki import wiki
 from .upload import upload
-from .github import clone_wiki
+from .github import pull
 
 app = Flask(__name__)
 app.register_blueprint(wiki)
@@ -36,7 +36,7 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD set: {password != ''}")
 
 # Clone wiki content
-clone_wiki()
+pull()
 
 # Run the app (if this file is called directly and not through 'flask run')
 # This is isn't recommended, but it's good enough to run a low-traffic wiki
