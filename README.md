@@ -1,3 +1,7 @@
+## Todo
+
+Need to commit images to the wiki repo, rather than the main repo.
+
 ## Assumptions
 
  * You're comfortable editing (or learning to work with) Markdown
