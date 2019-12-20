@@ -8,5 +8,5 @@ Here's the code you need to add this file to a page:
 
 Here's how the file will look using the above code:
 
-![Uploaded file](/uploads/{filename})
+![Uploaded file](uploads/{filename})
 
