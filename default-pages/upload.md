@@ -2,7 +2,7 @@
 
 Here's the code you need to add this file to a page:
 
-    ![Uploaded file](/uploads/{filename})
+    ![Uploaded file](uploads/{filename})
 
 ## Preview
 
