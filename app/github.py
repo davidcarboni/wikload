@@ -55,7 +55,6 @@ def commit(path, content, comment="Update"):
     repo.index.commit(comment)
 
     # Push the change
-    print(url)
     repo.remotes.origin.push()
 
     return True
