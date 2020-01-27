@@ -12,13 +12,17 @@ upload = Blueprint('upload', __name__)
 # Wiki file uploads
 
 @upload.route('/upload', methods=['GET'])
+@upload.route('/Upload', methods=['GET'])
 def upload_form():
     """ Form to upload images and other files to the wiki. """
+    user = os.getenv('GITHUB_USERNAME')
+    repo = os.getenv('GITHUB_REPO', f'{user}/{user}.github.io')
     return render_template('upload.html', 
         wiki_title=wiki_title(),
         title="Upload", 
         path="Upload", 
-        nav=Markup(nav())
+        nav=Markup(nav()),
+        repo=repo
         )
 
 @upload.route('/upload', methods=['POST'])
@@ -38,15 +42,18 @@ def upload_post():
         print(f'attempting to commit {path} to Github')
         if commit(path, temp):
             # Render a page to show the upload
-            with open("default-pages/upload.md") as f:
+            extension = os.path.splitext(filename)[1].lower()
+            md_filename = "upload_image.md" if extension in [".jpg", ".jpeg", ".gif", ".png"] else "upload_file.md"
+            with open(f"default-pages/{md_filename}") as f:
                 content = f.read()
             content = content.replace("{filename}", filename)
             md = markdown.markdown(content)
             html = style(md)
+            
             return render_template('page.html', 
                 wiki_title=wiki_title(),
                 title="Upload", 
-                path="Upload", 
+                path="Upload",
                 content=Markup(html), 
                 nav=Markup(nav()))
         else:
