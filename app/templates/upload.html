@@ -101,36 +101,41 @@
 
       <form method="post" action="/upload" enctype="multipart/form-data">
 
-        <!-- <div class="govuk-form-group">
-          <label class="govuk-label govuk-label--m" for="email">
+        <div class="govuk-form-group">
+          <label class="govuk-label govuk-label--m" for="username">
               Github username
           </label>
           <span id="username-hint" class="govuk-hint">
-            Please enter your Github username. You must have permission to access to the wiki repo on Github.
+              Please enter your Github username. 
+              You'll need permission to access to the wiki repo on Github.
           </span>
-          <input class="govuk-input" id="email" name="email" type="email" autocomplete="email" spellcheck="false">
+          <input class="govuk-input" id="username" name="username" type="text" autocomplete="email" spellcheck="false">
         </div>
     
         <div class="govuk-form-group">
           <label class="govuk-label govuk-label--m" for="password">
-              Github password
+              Password or access token
           </label>
           <span id="password-hint" class="govuk-hint">
-            Please enter your Github password (or access token). This will be sent directly to Github. It will never be stored by this app.
+              Please enter your Github password 
+              (or <a href="https://github.com/settings/tokens/new">
+                generate an access token
+              </a> with "<em>repo</em>" permission).
+              It won't be stored by this app. 
+              You can use a password manager to save it if you like.
           </span>
           <input class="govuk-input" id="password" name="password" type="password" autocomplete="new-password" spellcheck="false">
-        </div> -->
+        </div>
     
         <div class="govuk-form-group">
           <label class="govuk-label govuk-label--m" for="file">
-              Upload your file to notbinary/fsa-inspections
+              Upload your file to {{ repo }}
           </label>
           <span id="file-hint" class="govuk-hint">
               This can be an image or a download, such as PDF or Powerpoint.
           </span>
           <input class="govuk-file-upload" id="file" name="file" type="file" aria-describedby="upload-hint">
         </div>
-    
     
         <button type="submit" class="govuk-button" data-module="govuk-button">
           Upload to Github
@@ -150,25 +155,6 @@
         </h2>
         <nav role="navigation" aria-labelledby="subsection-title">
           {{ nav }}
-          <!--
-          <ul class="govuk-list govuk-!-font-size-16">
-            <li class="gem-c-related-navigation__link">
-              <a class="govuk-link" href="#/get-a-passport-urgently">Get a passport urgently</a>
-            </li>
-            <li class="gem-c-related-navigation__link">
-              <a class="govuk-link" href="#/renew-adult-passport">Renew or replace your adult passport</a>
-            </li>
-            <li class="gem-c-related-navigation__link">
-              <a class="govuk-link" href="#/passport-fees">Passport fees</a>
-            </li>
-            <li class="gem-c-related-navigation__link">
-              <a class="govuk-link" href="#/government/news/need-to-renew-your-british-passport-go-online">Need to renew your British passport? Go online</a>
-            </li>
-            <li class="gem-c-related-navigation__link">
-              <a class="govuk-link" href="#/government/news/changes-to-passport-applications-for-british-nationals-living-abroad">Changes to passport applications for British nationals living abroad</a>
-            </li>
-          </ul>
-        -->
         </nav>
       </aside>
 
