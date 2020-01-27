@@ -1,3 +1,6 @@
+
+[Upload another](upload)
+
 ## Including your file
 
 Here's the code you need to add this file to a page:
