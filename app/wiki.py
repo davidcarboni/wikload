@@ -11,39 +11,39 @@ wiki = Blueprint('wiki', __name__)
 
 # Flask routes
 
-@wiki.route('/', defaults={'path': ''})
-@wiki.route('/<path:path>')
-def catch_all(path):
-    """ Catch-all route 
+# @wiki.route('/', defaults={'path': ''})
+# @wiki.route('/<path:path>')
+# def catch_all(path):
+#     """ Catch-all route 
 
-    Renders markdown for the requested path, 
-    if a corresponding .md file can be found.
+#     Renders markdown for the requested path, 
+#     if a corresponding .md file can be found.
 
-    TODO: potential misuse of user-supplied path here
-    """
+#     TODO: potential misuse of user-supplied path here
+#     """
 
-    # Otherwise, try to render a page
-    print(f'Requested path: {path}')
+#     # Otherwise, try to render a page
+#     print(f'Requested path: {path}')
 
-    # Locate markdown
-    # Avoid a dodgy path by only taking the filename:
-    page_name = secure_filename(os.path.basename(path).strip('/'))
-    if not path:
-        # Wiki home page
-        page_name = 'Home'
-    print(f'Page name: {page_name}')
+#     # Locate markdown
+#     # Avoid a dodgy path by only taking the filename:
+#     page_name = secure_filename(os.path.basename(path).strip('/'))
+#     if not path:
+#         # Wiki home page
+#         page_name = 'Home'
+#     print(f'Page name: {page_name}')
 
-    # Be a bit lenient with capitalisation
-    page_path = case_lenient_markdown(page_name)
-    if not page_path:
-        print(f'Page {page_name} not found.')
-        abort(404)
-    print(f'Markdow file: {page_path}')
+#     # Be a bit lenient with capitalisation
+#     page_path = case_lenient_markdown(page_name)
+#     if not page_path:
+#         print(f'Page {page_name} not found.')
+#         abort(404)
+#     print(f'Markdow file: {page_path}')
     
-    # Render content
-    page_title = menu().get(page_name.lower())
-    print(f'Title for {page_name} is {page_title}')
-    return render(page_name, page_title, page_path)
+#     # Render content
+#     page_title = menu().get(page_name.lower())
+#     print(f'Title for {page_name} is {page_title}')
+#     return render(page_name, page_title, page_path)
 
 @wiki.route('/assets/<path:path>')
 def govuk_frontend_assets(path):
