@@ -14,7 +14,7 @@ def pull():
         repo = os.getenv('GITHUB_REPO')
         print(f"Repo: {repo}")
         url = f'https://github.com/{repo}.wiki.git'
-        print(y"Cloning {url}")
+        print(f"Cloning {url}")
         Repo.clone_from(url, 'wiki')
     
     # Wiki title - we may have set a custom one, so don't overwrite
