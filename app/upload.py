@@ -12,6 +12,9 @@ upload = Blueprint('upload', __name__)
 # Wiki file uploads
 
 @upload.route('/', methods=['GET'])
+def redirect_to_upload():
+    return redirect("/upload")
+
 @upload.route('/upload', methods=['GET'])
 @upload.route('/Upload', methods=['GET'])
 def upload_form():
