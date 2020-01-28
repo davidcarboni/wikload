@@ -1,15 +1,15 @@
 
 [Upload another](upload)
 
-## Including your file
+## Add this file to a page
 
-Here's the code you need to add this file to a page:
+Here's the markdown you'll need to add a link to this file in a page:
 
     [Uploaded file](uploads/{filename})
 
 ## Preview
 
-Here's how the file will look using the above code:
+Here's how the link will look using the above code:
 
 [Uploaded file](uploads/{filename})
 
