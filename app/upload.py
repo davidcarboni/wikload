@@ -15,8 +15,7 @@ upload = Blueprint('upload', __name__)
 @upload.route('/Upload', methods=['GET'])
 def upload_form():
     """ Form to upload images and other files to the wiki. """
-    user = os.getenv('GITHUB_USERNAME')
-    repo = os.getenv('GITHUB_REPO', f'{user}/{user}.github.io')
+    repo = os.getenv('GITHUB_REPO')
     return render_template('upload.html', 
         wiki_title=wiki_title(),
         title="Upload", 
@@ -32,6 +31,8 @@ def upload_post():
     # Process the uploaded file
     upload = request.files.get('file')
     if upload:
+        username = request.form.get("username")
+        password = request.form.get("password")
         filename = secure_filename(upload.filename)
         with tempfile.NamedTemporaryFile(delete=False) as t:
             t.write(upload.read())
@@ -40,7 +41,7 @@ def upload_post():
         # Commit to Github and, if successful, save locally:
         path = os.path.join('uploads', filename)
         print(f'attempting to commit {path} to Github')
-        if commit(path, temp):
+        if commit(path, temp, username, password):
             # Render a page to show the upload
             extension = os.path.splitext(filename)[1].lower()
             md_filename = "upload_image.md" if extension in [".jpg", ".jpeg", ".gif", ".png"] else "upload_file.md"
