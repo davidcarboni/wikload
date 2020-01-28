@@ -4,9 +4,6 @@ from git import Repo
 from github import Github
 from github.GithubException import UnknownObjectException, BadCredentialsException
 
-repo = os.getenv('GITHUB_REPO')
-title = os.getenv('WIKI_TITLE')
-
 def pull():
 
     if os.path.isdir(os.path.join('wiki', '.git')):
@@ -14,10 +11,14 @@ def pull():
         Repo('wiki').remotes.origin.pull(rebase=True)
     else:
         # clone
+        repo = os.getenv('GITHUB_REPO')
+        print(f"Repo: {repo}")
         url = f'https://github.com/{repo}.wiki.git'
+        print(y"Cloning {url}")
         Repo.clone_from(url, 'wiki')
     
     # Wiki title - we may have set a custom one, so don't overwrite
+    title = os.getenv('WIKI_TITLE')
     if title and not os.path.isfile(os.path.join('wiki', 'title.txt')):
         with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
             f.write(title)
