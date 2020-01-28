@@ -11,8 +11,7 @@ def pull():
 
     if os.path.isdir(os.path.join('wiki', '.git')):
         # pull
-        repo = Repo('wiki')
-        repo.remotes.origin.pull(rebase=True)
+        Repo('wiki').remotes.origin.pull(rebase=True)
     else:
         # clone
         url = f'https://github.com/{repo}.wiki.git'
