@@ -4,7 +4,7 @@ from git import Repo
 from github import Github
 from github.GithubException import UnknownObjectException, BadCredentialsException
 
-def pull():
+def pull(username, password):
 
     if os.path.isdir(os.path.join('wiki', '.git')):
         # pull
@@ -13,7 +13,7 @@ def pull():
         # clone
         repo = os.getenv('GITHUB_REPO')
         print(f"Repo: {repo}")
-        url = f'https://github.com/{repo}.wiki.git'
+        url = f'https://{username}:{password}@github.com/{repo}.wiki.git'
         print(f"Cloning {url}")
         Repo.clone_from(url, 'wiki')
     
@@ -26,7 +26,7 @@ def pull():
 def commit(path, content, username, password, comment="Update"):
 
     # Check we have the latest version of the repo
-    pull()
+    pull(username, password)
     if not os.path.isdir(os.path.join('wiki', 'uploads')):
         os.mkdir(os.path.join('wiki', 'uploads'))
 

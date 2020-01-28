@@ -36,7 +36,7 @@ else:
     print(f"Not setting up authentication. USERNAME: {username}, PASSWORD set: {password != ''}")
 
 # Clone wiki content
-pull()
+#pull()
 
 # Run the app (if this file is called directly and not through 'flask run')
 # This is isn't recommended, but it's good enough to run a low-traffic wiki
