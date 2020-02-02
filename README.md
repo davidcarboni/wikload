@@ -17,7 +17,7 @@ If you want to password-protect the upload app you can set the environment varia
 
 ### Usage
 
-Deploy this app to Heroku and set the environment variable `GITHUB_REPO`. You can optionally set `WIKI_TITLE` to set the title at the top of the upload pages.
+Deploy this app to Heroku and set the environment variable `GITHUB_REPO`.
 
 If you want password protection, add `USERNAME` and `PASSWORD` config variables to your Heroku app.
 
