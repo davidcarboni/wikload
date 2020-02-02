@@ -78,12 +78,9 @@ def internal_server_error(e):
 
 def wiki_title():
     """ Parse the wiki title """
-
-    wiki_title_file = default_file('title.txt')
-    with open(wiki_title_file) as f:
-        wiki_title = f.read()
-    print(f'Using wiki title {wiki_title} from {wiki_title_file}')
-    return wiki_title
+    repo = os.getenv('GITHUB_REPO')
+    segments = repo.split('/')
+    return segments[len(segments) - 1]
 
 def menu():
     """ Parse sidebar navigation menu links """
