@@ -1,5 +1,5 @@
 
-[Upload another](upload)
+[Upload another](upload) or [go back to the wiki](https://github.com/{repo}/wiki).
 
 
 ## Add this image to a page
