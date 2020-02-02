@@ -92,7 +92,8 @@
       <h1 class="govuk-heading-xl">Upload a file</h1>
 
       <p class="govuk-body">
-          You can upload a file to the wiki from here.
+          You can upload a file to the <em>{{repo}}</em> wiki from here,
+          or <a href="https://github.com/{{repo}}/wiki">go back to the wiki</a>.
       </p>
 
       <p class="govuk-body">
@@ -119,10 +120,9 @@
           <span id="password-hint" class="govuk-hint">
               Please enter your Github password 
               (or <a href="https://github.com/settings/tokens/new">
-                generate an access token
-              </a> with "<em>repo</em>" permission).
+                generate an access token</a> with "<em>repo</em>" scope).
               It won't be stored by this app. 
-              You can use a password manager to save it if you like.
+              You could use a password manager to save your access token for convenience.
           </span>
           <input class="govuk-input" id="password" name="password" type="password" autocomplete="new-password" spellcheck="false">
         </div>
@@ -132,7 +132,7 @@
               Upload your file to {{ repo }}
           </label>
           <span id="file-hint" class="govuk-hint">
-              This can be an image or a download, such as PDF or Powerpoint.
+              This can be an image, or a download like a PDF or Powerpoint.
           </span>
           <input class="govuk-file-upload" id="file" name="file" type="file" aria-describedby="upload-hint">
         </div>
