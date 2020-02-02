@@ -6,7 +6,7 @@
   "keywords": ["github", "wiki"],
   "env": {
     "GITHUB_REPO": {
-      "description": "The Github repo to upload to. This should be username/repo-name of the main repo, e.g. davidcarboni/wikload"
+      "description": "The Github repo whose wiki you want to work with. This should be username/repo-name of the repo, e.g. davidcarboni/wikload"
     }
   }
 }
