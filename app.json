@@ -1,0 +1,12 @@
+{
+  "name": "Wikload",
+  "description": "UI for uploading files to Github wiki repos.",
+  "repository": "https://github.com/davidcarboni/wikload",
+  "logo": "https://wikload.herokuapp.com/static/logo.png",
+  "keywords": ["github", "wiki"],
+  "env": {
+    "GITHUB_REPO": {
+      "description": "The Github repo to upload to. This should be username/repo-name of the main repo, e.g. davidcarboni/wikload"
+    }
+  }
+}
