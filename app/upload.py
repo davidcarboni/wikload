@@ -51,7 +51,9 @@ def upload_post():
             md_filename = "upload_image.md" if extension in [".jpg", ".jpeg", ".gif", ".png"] else "upload_file.md"
             with open(f"default-pages/{md_filename}") as f:
                 content = f.read()
+            repo = os.getenv('GITHUB_REPO')
             content = content.replace("{filename}", filename)
+            content = content.replace("{repo}", repo)
             md = markdown.markdown(content)
             html = style(md)
             
@@ -60,7 +62,8 @@ def upload_post():
                 title="Upload", 
                 path="Upload",
                 content=Markup(html), 
-                nav=Markup(nav()))
+                nav=Markup(nav()),
+                repo=repo)
         else:
             print('Commit failed?')
     
