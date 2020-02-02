@@ -16,12 +16,6 @@ def pull(username, password):
         url = f'https://{username}:{password}@github.com/{repo}.wiki.git'
         print(f"Cloning {url}")
         Repo.clone_from(url, 'wiki')
-    
-    # Wiki title - we may have set a custom one, so don't overwrite
-    title = os.getenv('WIKI_TITLE')
-    if title and not os.path.isfile(os.path.join('wiki', 'title.txt')):
-        with open(os.path.join('wiki', 'title.txt'), 'w+') as f:
-            f.write(title)
 
 def commit(path, content, username, password, comment="Update"):
 
