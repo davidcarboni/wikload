@@ -1,6 +1,3 @@
-## Todo
-
-Need to commit images to the wiki repo, rather than the main repo.
 
 ## Assumptions
 
@@ -14,19 +11,15 @@ Need to commit images to the wiki repo, rather than the main repo.
 
 ## Govwiki
 
-Render a Github wiki using Govuk frontend.
+Upload files to a Github wiki using Govuk frontend.
 
-The files in this repository can be copied into a Github wiki repo (https://github.com/username/repo[.wiki].git) and the result pushed to Heroku to create a Govuk-styled rendering of the wiki content.
-
-If you need to password-protect the content (for example if you're not currently working in the open) you can set the environment variables `USERNAME` and `PASSWORD` in the Heroku config vars section.
+If you want to password-protect the upload app you can set the environment variables `USERNAME` and `PASSWORD` in the Heroku config vars section.
 
 ### Usage
 
-Check out your wiki repo, which will be `https://github.com/user/repo.wiki.git` - NB it's `.wiki.git` for the wiki, distinct from the main repo, which is just `.git`.
+Deploy this app to Heroku and set the environment variable `GITHUB_REPO`. You can optionally set `WIKI_TITLE` to set the title at the top of the upload pages.
 
 If you want password protection, add `USERNAME` and `PASSWORD` config variables to your Heroku app.
-
-Copy the files from this repo into your wiki repo and check them in (you can skip `README.md`, `Dockerfile` and `run.sh`). Follow the instructions for adding a Heroku remote (Heroku will give you these instructions when you create a new app, on the Deployment tab). Push to Heroku with a `git push heroku master`.
 
 Browse to your Heroku app url to confirm that it's working as expected.
 
