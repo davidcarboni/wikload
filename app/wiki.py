@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, Markup, request, redirect, render_template, send_from_directory, abort
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from flask_basicauth import BasicAuth
 from flask_sslify import SSLify
 import markdown

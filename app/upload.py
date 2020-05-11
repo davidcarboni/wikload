@@ -1,5 +1,5 @@
 from flask import Blueprint, Markup, request, redirect, render_template
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 import markdown
 import os
 import tempfile
